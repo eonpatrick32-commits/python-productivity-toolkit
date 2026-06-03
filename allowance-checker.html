@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token Allowance Checker & Revoker — Security Tool | PyToolkit</title>
+<meta name="description" content="Check and revoke token approvals across Ethereum, BSC, Polygon, and 8 more chains. Protect your wallet from allowance exploits. Free security tool.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://toolkitpy.com/allowance-checker.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c17;--surface:#111a2e;--border:#1c2a45;--border2:#243356;--text:#e8edf5;--text2:#a0aec5;--text3:#657394;--amber:#f59e0b;--amber3:#fbbf24;--amber-glow:rgba(245,158,11,0.2);--green:#10b981;--red:#ef4444;--radius:12px;--radius-sm:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Outfit',sans-serif;font-weight:700;letter-spacing:-0.02em}
+.container{max-width:960px;margin:0 auto;padding:0 28px}
+.ff-mono{font-family:'JetBrains Mono',monospace}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 28px;height:64px;display:flex;align-items:center;background:rgba(8,12,23,0.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(28,42,69,0.5)}
+.nav-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-logo .dot{width:10px;height:10px;background:var(--amber);border-radius:50%;box-shadow:0 0 12px var(--amber)}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+main{padding:100px 0 60px}
+h1{font-size:clamp(1.5rem,4vw,2.2rem);text-align:center;margin-bottom:6px}
+.subtitle{text-align:center;color:var(--text3);margin-bottom:32px;font-size:1rem}
+.input-box{max-width:600px;margin:0 auto 28px}
+.input-box label{display:block;font-size:0.9rem;color:var(--text2);margin-bottom:6px;font-weight:500}
+.input-box input,select{width:100%;padding:14px 18px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.9rem;transition:border-color 0.2s}
+.input-box input:focus,select:focus{outline:none;border-color:var(--amber)}
+select{font-family:'Inter',sans-serif;cursor:pointer}
+.btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:0.9rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-primary{background:var(--amber);color:#0a0f1a}
+.btn-primary:hover{box-shadow:0 0 0 6px var(--amber-glow)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{opacity:0.9}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.warning-box{background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;max-width:600px;margin-left:auto;margin-right:auto}
+.warning-box p{font-size:0.88rem;color:var(--amber3)}
+.results-list{max-width:600px;margin:0 auto}
+.approval-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px}
+.approval-card .token{font-weight:600;font-size:1rem}
+.approval-card .spender{font-size:0.85rem;color:var(--text2);font-family:'JetBrains Mono',monospace;word-break:break-all;margin:4px 0}
+.approval-card .amount{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--amber3)}
+.approval-card .risk{display:inline-block;padding:2px 10px;border-radius:100px;font-size:0.75rem;font-weight:600;margin-top:8px}
+.risk-high{background:rgba(239,68,68,0.15);color:var(--red)}
+.risk-low{background:rgba(16,185,129,0.15);color:var(--green)}
+.risk-unknown{background:rgba(101,115,148,0.15);color:var(--text3)}
+.tip-box{background:linear-gradient(135deg,var(--amber-glow),rgba(0,210,160,0.04));border:2px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:28px;margin:48px auto;max-width:600px;text-align:center}
+.tip-box h3{font-size:1.15rem;margin-bottom:6px}
+.tip-box p{color:var(--text3);margin-bottom:12px}
+.tip-box code{display:block;background:var(--bg);padding:12px 16px;border-radius:var(--radius-sm);margin:12px auto;max-width:460px;font-size:0.78rem;word-break:break-all;color:var(--amber3);border:1px solid var(--border);font-family:'JetBrains Mono',monospace}
+.status-bar{text-align:center;margin-bottom:16px;font-size:0.85rem;color:var(--text3)}
+footer{padding:36px 0;border-top:1px solid var(--border);text-align:center;color:var(--text3);font-size:0.85rem}
+footer a{color:var(--amber3);text-decoration:none}
+@media(max-width:600px){.nav-links{display:none}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+<nav><div class="nav-inner">
+<a href="/" class="nav-logo"><span class="dot"></span>PyToolkit</a>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li><a href="/tools/">Free Tools</a></li>
+<li><a href="/balance-checker.html">Balance</a></li>
+<li><a href="/allowance-checker.html">Allowance</a></li>
+</ul>
+</div></nav>
+<main><div class="container">
+
+<h1>Token Allowance Checker & Revoker</h1>
+<p class="subtitle">See every contract with spending approval on your wallet. Revoke what you don't trust.</p>
+
+<div class="warning-box">
+<p>Token approvals let dapps spend your tokens. Old approvals are a security risk — anyone who finds an exploited contract can drain your wallet. Check regularly.</p>
+</div>
+
+<div class="input-box">
+<label>Wallet Address</label>
+<input type="text" id="address" placeholder="0x..." value="0x63c87ebb993feaf633aa832537858dbd0f209311">
+<label style="margin-top:12px">Chain</label>
+<select id="chain">
+<option value="1">Ethereum Mainnet</option>
+<option value="56">BNB Smart Chain</option>
+<option value="137">Polygon</option>
+<option value="42161">Arbitrum</option>
+<option value="10">Optimism</option>
+<option value="8453">Base</option>
+<option value="43114">Avalanche C-Chain</option>
+</select>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="checkAllowances()">Scan Approvals</button>
+<button class="btn" style="background:transparent;color:var(--text2);border:1.5px solid var(--border2)" onclick="document.getElementById('results').innerHTML='';document.getElementById('status').textContent=''">Clear</button>
+</div>
+</div>
+
+<div id="status" class="status-bar"></div>
+<div id="results" class="results-list"></div>
+
+<div class="tip-box">
+<h3>This tool is free. Security is a right, not a product.</h3>
+<p>If it saved you from a potential exploit, consider tipping.</p>
+<code>ETH: 0x960b9fe28490153eb0cb50ee9c91e7a9a3977dad</code>
+<p style="font-size:0.78rem;margin-top:4px">SOL: Dfm3P1Sm6Q5GJPSBVnBQWUeNqZPLoGZXNgqfRdyqVPVF</p>
+</div>
+
+</div></main>
+
+<footer><div class="container">
+<p>&copy; 2026 PyToolkit · <a href="/">Home</a> · <a href="/tools/">Tools</a></p>
+<p style="margin-top:6px;font-size:0.75rem">Revocations require wallet connection. Read-only scan is free and instant.</p>
+</div></footer>
+
+<script>
+// Known contracts mapped to risk levels
+const KNOWN_SPENDERS = {
+  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': { name: 'Uniswap V2 Router', risk: 'low' },
+  '0xe592427a0aece92de3edee1f18e0157c05861564': { name: 'Uniswap V3 Router', risk: 'low' },
+  '0x1111111254eeb25477b68fb85ed929f73a960582': { name: '1inch Router V5', risk: 'low' },
+  '0xdef1c0ded9bec7f1a1670819833240f027b25eff': { name: '0x Exchange Proxy', risk: 'low' },
+  '0x881d40237659c251811cec9c364ef91dc08d300c': { name: 'Metamask Swap Router', risk: 'low' },
+  '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad': { name: 'Uniswap Universal Router', risk: 'low' },
+  '0x216b4b4ba9f3e719726886d34a177484278bfcae': { name: 'Paraswap V5', risk: 'low' },
+};
+
+const CHAIN_NAMES = {1:'ethereum',56:'bsc',137:'polygon',42161:'arbitrum',10:'optimism',8453:'base',43114:'avalanche'};
+
+// Token list cache
+const TOKEN_CACHE = {};
+
+async function getTokenInfo(chainId, tokenAddress) {
+  const key = chainId + '-' + tokenAddress.toLowerCase();
+  if (TOKEN_CACHE[key]) return TOKEN_CACHE[key];
+
+  // Default
+  const info = { symbol: tokenAddress.substring(0,8) + '...', name: 'Unknown Token', decimals: 18 };
+  TOKEN_CACHE[key] = info;
+
+  // Try to get symbol via multicall or direct call
+  try {
+    const symbolData = '0x95d89b41'; // symbol()
+    const decimalsData = '0x313ce567'; // decimals()
+    const nameData = '0x06fdde03'; // name()
+
+    const rpc = getRPC(chainId);
+
+    // Get symbol
+    let resp = await fetch(rpc, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to:tokenAddress,data:symbolData},'latest'],id:1})
+    });
+    let data = await resp.json();
+    if (data.result && data.result !== '0x') {
+      try { info.symbol = decodeHexString(data.result); } catch(e){}
+    }
+
+    // Get decimals
+    resp = await fetch(rpc, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to:tokenAddress,data:decimalsData},'latest'],id:1})
+    });
+    data = await resp.json();
+    if (data.result && data.result !== '0x') {
+      info.decimals = parseInt(data.result, 16);
+    }
+
+    TOKEN_CACHE[key] = info;
+  } catch(e) {}
+
+  return info;
+}
+
+function decodeHexString(hex) {
+  if (hex === '0x') return '???';
+  // Remove padding (dynamic bytes: first 32 bytes = offset)
+  const stripped = hex.substring(2);
+  if (stripped.length < 128) {
+    // Simple static string
+    let str = '';
+    for (let i = 64; i < stripped.length; i += 2) {
+      const ch = parseInt(stripped.substring(i, i+2), 16);
+      if (ch === 0) break;
+      str += String.fromCharCode(ch);
+    }
+    return str || '???';
+  }
+  return '???';
+}
+
+function getRPC(chainId) {
+  const rpcs = {
+    1: 'https://eth.llamarpc.com',
+    56: 'https://bsc-dataseed.binance.org',
+    137: 'https://polygon.llamarpc.com',
+    42161: 'https://arb1.arbitrum.io/rpc',
+    10: 'https://mainnet.optimism.io',
+    8453: 'https://mainnet.base.org',
+    43114: 'https://api.avax.network/ext/bc/C/rpc',
+  };
+  return rpcs[chainId] || rpcs[1];
+}
+
+async function checkAllowances() {
+  const addr = document.getElementById('address').value.trim();
+  const chainId = parseInt(document.getElementById('chain').value);
+  const results = document.getElementById('results');
+  const status = document.getElementById('status');
+
+  if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+    status.innerHTML = '<span style="color:var(--red)">Invalid address</span>';
+    return;
+  }
+
+  status.textContent = 'Scanning allowance events on ' + CHAIN_NAMES[chainId].toUpperCase() + '... This may take 1-2 min.';
+  results.innerHTML = '<div class="approval-card"><div style="text-align:center;color:var(--text3)">Scanning blockchain for Approval events...</div></div>';
+
+  const rpc = getRPC(chainId);
+
+  // Scan for Approval events using eth_getLogs
+  // Approval(address indexed owner, address indexed spender, uint256 value)
+  const approvalTopic = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
+  const ownerTopic = '0x000000000000000000000000' + addr.substring(2).toLowerCase();
+
+  try {
+    const resp = await fetch(rpc, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        jsonrpc:'2.0', method:'eth_getLogs', id:1,
+        params: [{
+          fromBlock: '0x0',
+          toBlock: 'latest',
+          topics: [approvalTopic, ownerTopic]
+        }]
+      })
+    });
+    const data = await resp.json();
+
+    if (data.error) {
+      status.textContent = 'RPC limit reached. Try a different chain or refresh.';
+      results.innerHTML = '';
+      return;
+    }
+
+    const logs = data.result || [];
+
+    // Group by token+spender, keep latest
+    const approvals = {};
+    for (const log of logs) {
+      const token = '0x' + log.address.substring(2).toLowerCase();
+      const spender = '0x' + log.topics[2].substring(26).toLowerCase();
+      const value = BigInt(log.data || '0x0');
+      const key = token + '-' + spender;
+
+      if (!approvals[key] || log.blockNumber > approvals[key].blockNumber) {
+        approvals[key] = { token, spender, value, blockNumber: log.blockNumber };
+      }
+    }
+
+    // Filter to non-zero approvals
+    const active = Object.values(approvals).filter(a => a.value > 0n);
+
+    status.textContent = 'Found ' + active.length + ' active approval(s) on ' + CHAIN_NAMES[chainId].toUpperCase();
+
+    if (active.length === 0) {
+      results.innerHTML = '<div class="approval-card" style="text-align:center"><span style="color:var(--green);font-size:1.1rem">No active approvals found. Your wallet is clean.</span></div>';
+      return;
+    }
+
+    // Render cards
+    let html = '';
+    // Sort by value (largest first)
+    active.sort((a,b) => Number(b.value - a.value));
+
+    for (const a of active.slice(0, 20)) {
+      const tokenInfo = await getTokenInfo(chainId, a.token);
+      const spenderLower = a.spender.toLowerCase();
+      const known = KNOWN_SPENDERS[spenderLower];
+
+      let riskClass = 'risk-unknown';
+      let riskLabel = 'UNKNOWN';
+      if (known) {
+        riskClass = known.risk === 'low' ? 'risk-low' : 'risk-high';
+        riskLabel = known.risk.toUpperCase();
+      }
+
+      const valueFormatted = a.value >= 10n**30n ? 'Unlimited' : (Number(a.value) / 10**tokenInfo.decimals).toFixed(4);
+
+      html += '<div class="approval-card">'
+        + '<div class="token">' + tokenInfo.symbol + ' <span style="font-size:0.8rem;color:var(--text3)">(' + tokenInfo.name.substring(0,30) + ')</span></div>'
+        + '<div class="spender">Approved to: ' + (known ? known.name + ' (' + a.spender.substring(0,8) + '...)' : a.spender) + '</div>'
+        + '<div class="amount">Amount: ' + valueFormatted + '</div>'
+        + '<span class="risk ' + riskClass + '">' + riskLabel + ' RISK</span>'
+        + '</div>';
+    }
+
+    results.innerHTML = html;
+  } catch(e) {
+    status.textContent = 'Error: ' + e.message;
+    results.innerHTML = '';
+  }
+}
+</script>
+</body>
+</html>

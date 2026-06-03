@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Chain Gas Tracker — Real-time Gas Prices | PyToolkit</title>
+<meta name="description" content="Track real-time gas prices across Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche, and more. Free, auto-refreshing.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://toolkitpy.com/gas-tracker.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c17;--surface:#111a2e;--border:#1c2a45;--border2:#243356;--text:#e8edf5;--text2:#a0aec5;--text3:#657394;--amber:#f59e0b;--amber3:#fbbf24;--amber-glow:rgba(245,158,11,0.2);--green:#10b981;--red:#ef4444;--radius:12px;--radius-sm:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Outfit',sans-serif;font-weight:700;letter-spacing:-0.02em}
+.container{max-width:960px;margin:0 auto;padding:0 28px}
+.ff-mono{font-family:'JetBrains Mono',monospace}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 28px;height:64px;display:flex;align-items:center;background:rgba(8,12,23,0.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(28,42,69,0.5)}
+.nav-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-logo .dot{width:10px;height:10px;background:var(--amber);border-radius:50%;box-shadow:0 0 12px var(--amber)}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+main{padding:100px 0 60px}
+h1{font-size:clamp(1.5rem,4vw,2.2rem);text-align:center;margin-bottom:6px}
+.subtitle{text-align:center;color:var(--text3);margin-bottom:32px;font-size:1rem}
+.auto-refresh{text-align:center;margin-bottom:20px;font-size:0.85rem;color:var(--text3)}
+.auto-refresh span{color:var(--green);font-weight:600}
+.gas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;max-width:900px;margin:0 auto}
+.gas-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:all 0.2s}
+.gas-card:hover{border-color:var(--border2)}
+.gas-card .chain-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.gas-card .chain-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem}
+.gas-card .chain-name{font-weight:600;font-size:0.95rem}
+.gas-card .gas-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.85rem;border-bottom:1px solid rgba(28,42,69,0.4)}
+.gas-card .gas-row:last-child{border-bottom:none}
+.gas-card .gas-label{color:var(--text3)}
+.gas-card .gas-value{font-family:'JetBrains Mono',monospace;font-weight:600}
+.gas-card .gas-value.high{color:var(--red)}
+.gas-card .gas-value.med{color:var(--amber3)}
+.gas-card .gas-value.low{color:var(--green)}
+.gas-card .txn-cost{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);text-align:center}
+.gas-card.loading{opacity:0.5}
+.tip-box{background:linear-gradient(135deg,var(--amber-glow),rgba(0,210,160,0.04));border:2px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:28px;margin:48px auto;max-width:600px;text-align:center}
+.tip-box h3{font-size:1.15rem;margin-bottom:6px}
+.tip-box p{color:var(--text3);margin-bottom:12px}
+.tip-box code{display:block;background:var(--bg);padding:12px 16px;border-radius:var(--radius-sm);margin:12px auto;max-width:460px;font-size:0.78rem;word-break:break-all;color:var(--amber3);border:1px solid var(--border);font-family:'JetBrains Mono',monospace}
+footer{padding:36px 0;border-top:1px solid var(--border);text-align:center;color:var(--text3);font-size:0.85rem}
+footer a{color:var(--amber3);text-decoration:none}
+@media(max-width:600px){.gas-grid{grid-template-columns:1fr}.nav-links{display:none}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+<nav><div class="nav-inner">
+<a href="/" class="nav-logo"><span class="dot"></span>PyToolkit</a>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li><a href="/tools/">Free Tools</a></li>
+<li><a href="/balance-checker.html">Balance</a></li>
+<li><a href="/gas-tracker.html">Gas</a></li>
+</ul>
+</div></nav>
+<main><div class="container">
+
+<h1>Multi-Chain Gas Tracker</h1>
+<p class="subtitle">Real-time gas prices across 10 EVM chains. Auto-refreshes every 15 seconds.</p>
+<div class="auto-refresh">Auto-refreshing in <span id="countdown">15</span>s · <button onclick="refreshAll()" style="background:none;border:none;color:var(--amber3);cursor:pointer;font-family:'Inter',sans-serif;text-decoration:underline">Refresh now</button></div>
+
+<div class="gas-grid" id="gas-grid"></div>
+
+<div class="tip-box">
+<h3>Check gas before every trade. This tool makes it free.</h3>
+<p>If it saves you from overpaying gas, consider a tip.</p>
+<code>ETH: 0x960b9fe28490153eb0cb50ee9c91e7a9a3977dad</code>
+<p style="font-size:0.78rem;margin-top:4px">SOL: Dfm3P1Sm6Q5GJPSBVnBQWUeNqZPLoGZXNgqfRdyqVPVF</p>
+</div>
+
+</div></main>
+<footer><div class="container">
+<p>&copy; 2026 PyToolkit · <a href="/">Home</a> · <a href="/tools/">Tools</a></p>
+<p style="margin-top:6px;font-size:0.75rem">Gas data from public RPC endpoints. Refresh every 15s.</p>
+</div></footer>
+
+<script>
+const CHAINS = [
+  { id:1, name:'Ethereum', symbol:'ETH', rpc:'https://eth.llamarpc.com', color:'#627eea', ethPrice:2500 },
+  { id:56, name:'BNB Chain', symbol:'BNB', rpc:'https://bsc-dataseed.binance.org', color:'#f0b90b', ethPrice:620 },
+  { id:137, name:'Polygon', symbol:'MATIC', rpc:'https://polygon.llamarpc.com', color:'#8247e5', ethPrice:0.55 },
+  { id:42161, name:'Arbitrum', symbol:'ETH', rpc:'https://arb1.arbitrum.io/rpc', color:'#28a0f0', ethPrice:2500 },
+  { id:10, name:'Optimism', symbol:'ETH', rpc:'https://mainnet.optimism.io', color:'#ff0420', ethPrice:2500 },
+  { id:8453, name:'Base', symbol:'ETH', rpc:'https://mainnet.base.org', color:'#0052ff', ethPrice:2500 },
+  { id:43114, name:'Avalanche', symbol:'AVAX', rpc:'https://api.avax.network/ext/bc/C/rpc', color:'#e84142', ethPrice:28 },
+  { id:250, name:'Fantom', symbol:'FTM', rpc:'https://rpc.fantom.network', color:'#1969ff', ethPrice:0.75 },
+  { id:1101, name:'Polygon zkEVM', symbol:'ETH', rpc:'https://zkevm-rpc.com', color:'#8247e5', ethPrice:2500 },
+  { id:324, name:'zkSync Era', symbol:'ETH', rpc:'https://mainnet.era.zksync.io', color:'#8c8dfc', ethPrice:2500 },
+];
+
+function gasClass(gwei, chain) {
+  // Different thresholds for different chains
+  if (chain === 56) return gwei <= 3 ? 'low' : gwei <= 5 ? 'med' : 'high';
+  if (chain === 137) return gwei <= 50 ? 'low' : gwei <= 150 ? 'med' : 'high';
+  if (chain === 1) return gwei <= 10 ? 'low' : gwei <= 30 ? 'med' : 'high';
+  return gwei <= 5 ? 'low' : gwei <= 15 ? 'med' : 'high';
+}
+
+async function getGas(chain) {
+  try {
+    const resp = await fetch(chain.rpc, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const gwei = parseInt(data.result, 16) / 1e9;
+    const usdPerGas = (gwei / 1e9) * chain.ethPrice;
+    // Typical tx costs: 21000 for simple ETH transfer, ~65000 for swap
+    const simpleTx = usdPerGas * 21000;
+    const swapTx = usdPerGas * 65000;
+
+    return { chain:chain.name, gwei, simpleTx, swapTx, symbol:chain.symbol, color:chain.color, error:null, chainId:chain.id };
+  } catch(e) {
+    return { chain:chain.name, gwei:0, simpleTx:0, swapTx:0, symbol:chain.symbol, color:chain.color, error:e.message, chainId:chain.id };
+  }
+}
+
+function renderCard(d) {
+  const gweiClass = d.error ? '' : gasClass(d.gwei, d.chainId);
+  const gweiDisp = d.error ? 'RPC down' : d.gwei.toFixed(2) + ' Gwei';
+  const simpleDisp = d.error ? '' : '$' + d.simpleTx.toFixed(4);
+  const swapDisp = d.error ? '' : '$' + d.swapTx.toFixed(4);
+
+  return '<div class="gas-card' + (d.error ? ' loading' : '') + '">'
+    + '<div class="chain-header">'
+    + '<div class="chain-icon" style="background:' + d.color + ';color:#fff">' + d.symbol.substring(0,2) + '</div>'
+    + '<div class="chain-name">' + d.chain + '</div>'
+    + '</div>'
+    + '<div class="gas-row"><span class="gas-label">Gas Price</span><span class="gas-value ' + gweiClass + '">' + gweiDisp + '</span></div>'
+    + '<div class="gas-row"><span class="gas-label">Simple TX</span><span class="gas-value">' + simpleDisp + '</span></div>'
+    + '<div class="gas-row"><span class="gas-label">Swap TX</span><span class="gas-value">' + swapDisp + '</span></div>'
+    + (d.error ? '' : '<div class="txn-cost">Swap costs ~' + swapDisp + '</div>')
+    + '</div>';
+}
+
+async function refreshAll() {
+  const grid = document.getElementById('gas-grid');
+  grid.innerHTML = CHAINS.map(c => '<div class="gas-card loading"><div class="chain-header"><div class="chain-icon" style="background:' + c.color + ';color:#fff">' + c.symbol.substring(0,2) + '</div><div class="chain-name">' + c.name + '</div></div><div class="gas-row"><span class="gas-label">Loading...</span><span class="gas-value">...</span></div></div>').join('');
+
+  const results = await Promise.all(CHAINS.map(c => getGas(c)));
+  results.sort((a,b) => {
+    if (a.error && !b.error) return 1;
+    if (!a.error && b.error) return -1;
+    return a.gwei - b.gwei;
+  });
+  grid.innerHTML = results.map(renderCard).join('');
+}
+
+let countdown = 15;
+setInterval(() => {
+  countdown--;
+  document.getElementById('countdown').textContent = countdown;
+  if (countdown <= 0) { countdown = 15; refreshAll(); }
+}, 1000);
+
+refreshAll();
+</script>
+</body>
+</html>

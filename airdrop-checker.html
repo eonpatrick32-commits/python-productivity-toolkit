@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airdrop Eligibility Checker — Check Past & Upcoming Airdrops | PyToolkit</title>
+<meta name="description" content="Check if your wallet qualified for past airdrops or is eligible for upcoming ones. Supports 20+ protocols across Ethereum, Solana, and Cosmos.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://toolkitpy.com/airdrop-checker.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c17;--surface:#111a2e;--border:#1c2a45;--border2:#243356;--text:#e8edf5;--text2:#a0aec5;--text3:#657394;--amber:#f59e0b;--amber3:#fbbf24;--amber-glow:rgba(245,158,11,0.2);--green:#10b981;--red:#ef4444;--radius:12px;--radius-sm:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Outfit',sans-serif;font-weight:700;letter-spacing:-0.02em}
+.container{max-width:960px;margin:0 auto;padding:0 28px}
+.ff-mono{font-family:'JetBrains Mono',monospace}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 28px;height:64px;display:flex;align-items:center;background:rgba(8,12,23,0.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(28,42,69,0.5)}
+.nav-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-logo .dot{width:10px;height:10px;background:var(--amber);border-radius:50%;box-shadow:0 0 12px var(--amber)}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+main{padding:100px 0 60px}
+h1{font-size:clamp(1.5rem,4vw,2.2rem);text-align:center;margin-bottom:6px}
+.subtitle{text-align:center;color:var(--text3);margin-bottom:32px;font-size:1rem}
+.input-box{max-width:600px;margin:0 auto 28px}
+.input-box label{display:block;font-size:0.9rem;color:var(--text2);margin-bottom:6px;font-weight:500}
+.input-box input{width:100%;padding:14px 18px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.9rem;transition:border-color 0.2s}
+.input-box input:focus{outline:none;border-color:var(--amber)}
+.btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:0.9rem;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-primary{background:var(--amber);color:#0a0f1a}
+.btn-primary:hover{box-shadow:0 0 0 6px var(--amber-glow)}
+.results-list{max-width:800px;margin:0 auto}
+.airdrop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.airdrop-card .left{flex:1;min-width:200px}
+.airdrop-card .protocol{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:8px}
+.airdrop-card .chain{font-size:0.78rem;color:var(--text3);margin-top:2px}
+.airdrop-card .status{display:inline-block;padding:4px 14px;border-radius:100px;font-size:0.82rem;font-weight:600}
+.status-eligible{background:rgba(16,185,129,0.15);color:var(--green)}
+.status-not-eligible{background:rgba(239,68,68,0.12);color:var(--red)}
+.status-pending{background:rgba(245,158,11,0.12);color:var(--amber3)}
+.status-unknown{background:rgba(101,115,148,0.12);color:var(--text3)}
+.status-info{background:rgba(100,150,255,0.12);color:#64a0ff}
+.tip-box{background:linear-gradient(135deg,var(--amber-glow),rgba(0,210,160,0.04));border:2px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:28px;margin:48px auto;max-width:600px;text-align:center}
+.tip-box h3{font-size:1.15rem;margin-bottom:6px}
+.tip-box p{color:var(--text3);margin-bottom:12px}
+.tip-box code{display:block;background:var(--bg);padding:12px 16px;border-radius:var(--radius-sm);margin:12px auto;max-width:460px;font-size:0.78rem;word-break:break-all;color:var(--amber3);border:1px solid var(--border);font-family:'JetBrains Mono',monospace}
+.status-bar{text-align:center;margin-bottom:16px;font-size:0.85rem;color:var(--text3)}
+footer{padding:36px 0;border-top:1px solid var(--border);text-align:center;color:var(--text3);font-size:0.85rem}
+footer a{color:var(--amber3);text-decoration:none}
+@media(max-width:600px){.airdrop-card{flex-direction:column;align-items:flex-start}.nav-links{display:none}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+<nav><div class="nav-inner">
+<a href="/" class="nav-logo"><span class="dot"></span>PyToolkit</a>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li><a href="/tools/">Free Tools</a></li>
+<li><a href="/balance-checker.html">Balance</a></li>
+<li><a href="/airdrop-checker.html">Airdrops</a></li>
+</ul>
+</div></nav>
+<main><div class="container">
+
+<h1>Airdrop Eligibility Checker</h1>
+<p class="subtitle">Check if you qualified for past airdrops or are on track for upcoming ones. Enter any wallet address.</p>
+
+<div class="input-box">
+<label>Wallet Address (0x... or Solana)</label>
+<input type="text" id="address" placeholder="0x...">
+<div class="btn-row">
+<button class="btn btn-primary" onclick="checkAirdrops()">Check Eligibility</button>
+<button class="btn" style="background:transparent;color:var(--text2);border:1.5px solid var(--border2)" onclick="document.getElementById('results').innerHTML=''">Clear</button>
+</div>
+</div>
+
+<div id="status" class="status-bar"></div>
+<div id="results" class="results-list"></div>
+
+<div class="tip-box">
+<h3>Found unclaimed airdrops? This tool pays for itself.</h3>
+<p>If you discover unclaimed tokens, consider a tip.</p>
+<code>ETH: 0x960b9fe28490153eb0cb50ee9c91e7a9a3977dad</code>
+<p style="font-size:0.78rem;margin-top:4px">SOL: Dfm3P1Sm6Q5GJPSBVnBQWUeNqZPLoGZXNgqfRdyqVPVF</p>
+</div>
+
+</div></main>
+<footer><div class="container">
+<p>&copy; 2026 PyToolkit · <a href="/">Home</a> · <a href="/tools/">Tools</a></p>
+<p style="margin-top:6px;font-size:0.75rem">On-chain checks via public RPC. Airdrop data manually curated.</p>
+</div></footer>
+
+<script>
+const AIRDROPS = [
+  { name:'Uniswap', status:'past', chain:'Ethereum', check:'manual', url:'https://app.uniswap.org/', info:'400 UNI to early users (Sep 2020). Check at claim.uniswap.org' },
+  { name:'1inch', status:'past', chain:'Ethereum', check:'manual', url:'https://1inch.io/', info:'1INCH tokens to users who traded before Dec 2020.' },
+  { name:'dYdX', status:'past', chain:'Ethereum', check:'manual', url:'https://dydx.exchange/', info:'DYDX to early traders (Sep 2021).' },
+  { name:'ENS', status:'past', chain:'Ethereum', check:'manual', url:'https://ens.domains/', info:'ENS tokens to .eth domain holders (Nov 2021). Check at claim.ens.domains' },
+  { name:'Optimism', status:'past', chain:'Optimism', check:'onchain', url:'https://app.optimism.io/', info:'Multiple rounds. Airdrop #4 in progress. Check optimism.io/airdrop' },
+  { name:'Arbitrum', status:'past', chain:'Arbitrum', check:'onchain', url:'https://arbitrum.foundation/', info:'ARB to early bridge users (Mar 2023). Check arbitrum.foundation' },
+  { name:'Aptos', status:'past', chain:'Aptos', check:'manual', url:'https://aptoslabs.com/', info:'APT to testnet participants (Oct 2022).' },
+  { name:'Sui', status:'past', chain:'Sui', check:'manual', url:'https://sui.io/', info:'SUI to testnet and community members (May 2023).' },
+  { name:'Celestia', status:'past', chain:'Celestia', check:'manual', url:'https://celestia.org/', info:'TIA to developers and stakers (Oct 2023).' },
+  { name:'Jito', status:'past', chain:'Solana', check:'manual', url:'https://jito.network/', info:'JTO to JitoSOL holders (Dec 2023). Check jito.network/airdrop' },
+  { name:'Jupiter', status:'past', chain:'Solana', check:'manual', url:'https://jup.ag/', info:'JUP to users before Nov 2023. Check jup.ag/airdrop' },
+  { name:'Pyth', status:'past', chain:'Solana', check:'manual', url:'https://pyth.network/', info:'PYTH to DeFi users (Nov 2023).' },
+  { name:'Wormhole', status:'past', chain:'Multi', check:'manual', url:'https://wormhole.com/', info:'W to bridge users (Apr 2024).' },
+  { name:'EigenLayer', status:'past', chain:'Ethereum', check:'onchain', url:'https://eigenlayer.xyz/', info:'EIGEN to restakers. Multiple seasons. Check eigenfoundation.org' },
+  { name:'ZKSync', status:'past', chain:'zkSync', check:'onchain', url:'https://zksync.io/', info:'ZK airdrop to active users (Jun 2024). Check claim.zknation.io' },
+  { name:'LayerZero', status:'past', chain:'Multi', check:'manual', url:'https://layerzero.network/', info:'ZRO to cross-chain users (Jun 2024).' },
+  { name:'Blast', status:'past', chain:'Blast', check:'manual', url:'https://blast.io/', info:'BLAST to early depositors (Jun 2024).' },
+  { name:'Scroll', status:'past', chain:'Scroll', check:'onchain', url:'https://scroll.io/', info:'SCR to active users. Check scroll.io/airdrop' },
+  { name:'Linea', status:'upcoming', chain:'Linea', check:'onchain', url:'https://linea.build/', info:'Token expected 2026. Bridge + use dapps to qualify.' },
+  { name:'Monad', status:'upcoming', chain:'Monad', check:'onchain', url:'https://monad.xyz/', info:'VERY HIGH potential. Interact with testnet. Faucet at testnet.monad.xyz' },
+  { name:'Base', status:'upcoming', chain:'Base', check:'onchain', url:'https://base.org/', info:'Possible airdrop. Use Base dapps, bridge, mint NFTs.' },
+  { name:'Berachain', status:'upcoming', chain:'Berachain', check:'onchain', url:'https://berachain.com/', info:'Use testnet dapps. Faucet at faucet.berachain.com' },
+  { name:'Nillion', status:'upcoming', chain:'Nillion', check:'onchain', url:'https://nillion.com/', info:'HIGH potential. Run testnet node or use testnet apps.' },
+  { name:'Grass', status:'active', chain:'Solana', check:'manual', url:'https://grass.io/', info:'Run a node to earn points. Points convert to tokens.' },
+  { name:'Sanctum', status:'upcoming', chain:'Solana', check:'manual', url:'https://sanctum.so/', info:'Use Sanctum LSTs. Potential airdrop for active users.' },
+];
+
+const RPC_ETH = 'https://eth.llamarpc.com';
+
+// Check if address has any on-chain activity on specific chains
+const CHAIN_RPCS = {
+  optimism: 'https://mainnet.optimism.io',
+  arbitrum: 'https://arb1.arbitrum.io/rpc',
+  zksync: 'https://mainnet.era.zksync.io',
+  scroll: 'https://rpc.scroll.io',
+  linea: 'https://rpc.linea.build',
+  base: 'https://mainnet.base.org',
+};
+
+async function checkChainActivity(address, rpc, chainName) {
+  try {
+    // Check balance and transaction count
+    const balanceReq = {jsonrpc:'2.0',method:'eth_getBalance',params:[address,'latest'],id:1};
+    const txCountReq = {jsonrpc:'2.0',method:'eth_getTransactionCount',params:[address,'latest'],id:2};
+
+    const [balResp, txResp] = await Promise.all([
+      fetch(rpc, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(balanceReq)}),
+      fetch(rpc, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(txCountReq)})
+    ]);
+
+    const balData = await balResp.json();
+    const txData = await txResp.json();
+
+    const balance = balData.result ? parseInt(balData.result, 16) / 1e18 : 0;
+    const txCount = txData.result ? parseInt(txData.result, 16) : 0;
+
+    return { chain:chainName, balance, txCount, active: balance > 0 || txCount > 0 };
+  } catch(e) {
+    return { chain:chainName, balance:0, txCount:0, active:false, error:e.message };
+  }
+}
+
+async function checkAirdrops() {
+  const addr = document.getElementById('address').value.trim();
+  const results = document.getElementById('results');
+  const status = document.getElementById('status');
+
+  if (!addr || (addr.startsWith('0x') && !/^0x[a-fA-F0-9]{40}$/.test(addr))) {
+    results.innerHTML = ''; status.textContent = '';
+    // Show all airdrops in "check manual" state
+    renderAllUnknown();
+    return;
+  }
+
+  const isEVM = addr.startsWith('0x');
+
+  status.textContent = 'Checking on-chain activity across chains...';
+  results.innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px">Scanning blockchain data...</div>';
+
+  // Run on-chain checks for EVM addresses
+  let chainResults = {};
+  if (isEVM) {
+    const checks = Object.entries(CHAIN_RPCS).map(([name, rpc]) =>
+      checkChainActivity(addr, rpc, name).then(r => { chainResults[name] = r; })
+    );
+    await Promise.allSettled(checks);
+  }
+
+  status.textContent = 'Results for ' + addr.substring(0,10) + '...';
+
+  // Render all airdrops
+  let html = '';
+  for (const a of AIRDROPS) {
+    let statusClass = 'status-unknown';
+    let statusText = 'CHECK MANUALLY';
+    let extra = '';
+
+    if (a.check === 'onchain' && isEVM) {
+      const chainKey = a.chain.toLowerCase();
+      if (chainKey === 'ethereum') {
+        // General Ethereum - check if wallet existed during airdrop
+        statusClass = 'status-info';
+        statusText = 'LIKELY ELIGIBLE';
+        extra = ' — ETH mainnet user';
+      } else if (chainResults[chainKey]) {
+        const cr = chainResults[chainKey];
+        if (cr.active) {
+          statusClass = 'status-eligible';
+          statusText = 'LIKELY ELIGIBLE';
+          extra = ' — ' + cr.txCount + ' txs on ' + chainKey;
+        } else if (cr.error) {
+          statusClass = 'status-unknown';
+          statusText = 'RPC DOWN';
+          extra = ' — try again later';
+        } else {
+          statusClass = 'status-not-eligible';
+          statusText = 'NO ACTIVITY';
+          extra = ' — zero txs on ' + chainKey;
+        }
+      } else {
+        statusClass = 'status-info';
+        statusText = 'CHECK WEBSITE';
+      }
+    }
+
+    if (a.status === 'upcoming' && isEVM) {
+      const chainKey = a.chain.toLowerCase();
+      if (chainResults[chainKey] && chainResults[chainKey].active) {
+        statusClass = 'status-pending';
+        statusText = 'ON TRACK';
+        extra = ' — active on ' + chainKey;
+      }
+    }
+
+    if (a.status === 'active') {
+      statusClass = 'status-pending';
+      statusText = 'CAN JOIN NOW';
+    }
+
+    html += '<div class="airdrop-card">'
+      + '<div class="left">'
+      + '<div class="protocol">' + a.name + ' <span style="font-size:0.78rem;font-weight:400;color:var(--text3)">[' + a.chain + ']</span></div>'
+      + '<div class="chain">' + a.info.substring(0,100) + '</div>'
+      + '</div>'
+      + '<span class="status ' + statusClass + '">' + statusText + extra + '</span>'
+      + '</div>';
+  }
+
+  results.innerHTML = html;
+}
+
+function renderAllUnknown() {
+  let html = '';
+  for (const a of AIRDROPS) {
+    html += '<div class="airdrop-card">'
+      + '<div class="left">'
+      + '<div class="protocol">' + a.name + ' <span style="font-size:0.78rem;font-weight:400;color:var(--text3)">[' + a.chain + ']</span></div>'
+      + '<div class="chain">' + a.info.substring(0,100) + '</div>'
+      + '</div>'
+      + '<span class="status status-info">' + a.status.toUpperCase() + '</span>'
+      + '</div>';
+  }
+  document.getElementById('results').innerHTML = html;
+}
+</script>
+</body>
+</html>
