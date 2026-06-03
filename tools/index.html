@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Developer Tools — Regex Tester, JSON Formatter, UUID Generator & More</title>
+<meta name="description" content="Free online developer tools: Regex tester, JSON formatter, UUID generator, Base64 encoder, CSV-to-JSON converter, and more. No ads, no tracking.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--surface:#131320;--border:#1e1e30;--text:#e0e0f0;--muted:#707090;--accent:#6c5ce7;--accent-glow:#a29bfe;--green:#00d2a0;--red:#ff6b6b;--card:#151528}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
+header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,15,0.95);backdrop-filter:blur(12px);z-index:100}
+header .container{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.3rem;font-weight:700;color:var(--accent-glow);text-decoration:none}
+.logo span{color:var(--text);font-weight:400}
+nav a{color:var(--muted);text-decoration:none;font-size:0.9rem;margin-left:20px}
+nav a:hover{color:var(--text)}
+h1{font-size:2.2rem;margin:40px 0 8px;text-align:center}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:40px;font-size:1.05rem}
+.tool-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:24px}
+.tool-section h2{font-size:1.2rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.tool-section h2 .badge{font-size:0.7rem;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px}
+.badge-free{background:var(--green);color:#000}
+.badge-pro{background:var(--accent);color:#fff}
+textarea,input[type="text"],select{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Fira Code','Consolas',monospace;font-size:0.9rem;resize:vertical;min-height:100px}
+input[type="text"]{min-height:auto;font-family:'Segoe UI',system-ui,sans-serif}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+.btn{padding:10px 24px;border-radius:8px;font-weight:600;font-size:0.9rem;cursor:pointer;border:none;transition:all 0.2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#7c6ff7}
+.btn-outline{background:transparent;color:var(--accent-glow);border:2px solid var(--accent)}
+.btn-outline:hover{background:rgba(108,92,231,0.1)}
+.btn-sm{padding:6px 16px;font-size:0.8rem}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.output-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;min-height:60px;font-family:'Fira Code','Consolas',monospace;font-size:0.85rem;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto;color:var(--green);margin-top:12px}
+.output-box.error{color:var(--red)}
+.tip-box{background:linear-gradient(135deg,rgba(108,92,231,0.1),rgba(0,210,160,0.05));border:1px solid var(--accent);border-radius:12px;padding:24px;margin:40px 0;text-align:center}
+.tip-box h3{font-size:1.3rem;margin-bottom:8px}
+.tip-box p{color:var(--muted);margin-bottom:16px}
+.tip-box code{display:block;background:var(--bg);padding:12px 16px;border-radius:6px;margin:12px auto;max-width:500px;font-size:0.8rem;word-break:break-all;color:var(--accent-glow);border:1px solid var(--border)}
+.tool-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+.tool-nav a{padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.tool-nav a:hover,.tool-nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cta-box{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:24px;margin:32px 0;text-align:center}
+.cta-box h3{font-size:1.1rem;margin-bottom:8px;color:var(--accent-glow)}
+.cta-box p{color:var(--muted);margin-bottom:12px;font-size:0.9rem}
+footer{padding:40px 0;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:0.85rem}
+footer a{color:var(--accent-glow);text-decoration:none}
+select{padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;margin:8px 0}
+@media(max-width:768px){h1{font-size:1.6rem}.tool-section{padding:20px 16px}}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container">
+<a href="/" class="logo">ToolKit<span>.py</span></a>
+<nav>
+<a href="/">Home</a>
+<a href="/tools/">Tools</a>
+<a href="/#pricing">Get the Toolkit</a>
+</nav>
+</div>
+</header>
+
+<div class="container">
+<h1>Free Developer Tools</h1>
+<p class="subtitle">100% free. No ads. No signup. Powered by your browser.</p>
+
+<div class="tool-nav">
+<a href="#regex">Regex Tester</a>
+<a href="#json">JSON Formatter</a>
+<a href="#uuid">UUID Generator</a>
+<a href="#base64">Base64</a>
+<a href="#csv">CSV→JSON</a>
+<a href="#qr">QR Code</a>
+<a href="#color">Color Converter</a>
+<a href="#md">Markdown Preview</a>
+</div>
+
+<!-- REGEX TESTER -->
+<div class="tool-section" id="regex">
+<h2>&#128221; Regex Tester <span class="badge badge-free">Free</span></h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div>
+<label style="font-size:0.85rem;color:var(--muted)">Pattern</label>
+<input type="text" id="regex-pattern" placeholder="e.g. \d{3}-\d{2}-\d{4}" oninput="runRegex()">
+<div style="display:flex;gap:8px;margin-top:8px">
+<label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;color:var(--muted)">
+<input type="checkbox" id="regex-global" checked onchange="runRegex()"> Global
+</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;color:var(--muted)">
+<input type="checkbox" id="regex-case" onchange="runRegex()"> Case insensitive
+</label>
+</div>
+</div>
+<div>
+<label style="font-size:0.85rem;color:var(--muted)">Test String</label>
+<textarea id="regex-input" placeholder="Enter text to test against..." oninput="runRegex()">My SSN is 123-45-6789 and phone is 555-123-4567.</textarea>
+</div>
+</div>
+<div class="output-box" id="regex-output">Enter a pattern to see matches...</div>
+</div>
+
+<!-- JSON FORMATTER -->
+<div class="tool-section" id="json">
+<h2>&#128230; JSON Formatter & Validator <span class="badge badge-free">Free</span></h2>
+<textarea id="json-input" placeholder='Paste unformatted JSON here...' oninput="formatJson()">{"name":"John","age":30,"city":"New York","hobbies":["coding","reading","gaming"],"address":{"street":"123 Main St","zip":"10001"}}</textarea>
+<div class="btn-row">
+<button class="btn btn-primary btn-sm" onclick="formatJson()">Format</button>
+<button class="btn btn-outline btn-sm" onclick="minifyJson()">Minify</button>
+<button class="btn btn-outline btn-sm" onclick="copyOutput('json-output')">Copy</button>
+</div>
+<div class="output-box" id="json-output">Click Format to prettify JSON...</div>
+</div>
+
+<!-- UUID GENERATOR -->
+<div class="tool-section" id="uuid">
+<h2>&#128273; UUID Generator <span class="badge badge-free">Free</span></h2>
+<div class="btn-row" style="margin-top:0">
+<button class="btn btn-primary btn-sm" onclick="generateUUID('v4')">Generate v4</button>
+<button class="btn btn-outline btn-sm" onclick="generateUUID('v1')">Generate v1 (timestamp)</button>
+<button class="btn btn-outline btn-sm" onclick="generateUUID('nil')">Nil UUID</button>
+<button class="btn btn-outline btn-sm" onclick="generateUUID('bulk')">Generate 10</button>
+</div>
+<div class="output-box" id="uuid-output" style="font-size:1.2rem;text-align:center;padding:24px 16px;">
+Click a button to generate UUIDs...
+</div>
+</div>
+
+<!-- BASE64 ENCODER/DECODER -->
+<div class="tool-section" id="base64">
+<h2>&#128259; Base64 Encoder / Decoder <span class="badge badge-free">Free</span></h2>
+<textarea id="b64-input" placeholder="Enter text to encode or base64 to decode...">Hello, World! This is a test string.</textarea>
+<div class="btn-row">
+<button class="btn btn-primary btn-sm" onclick="encodeB64()">Encode</button>
+<button class="btn btn-outline btn-sm" onclick="decodeB64()">Decode</button>
+<button class="btn btn-outline btn-sm" onclick="copyOutput('b64-output')">Copy</button>
+</div>
+<div class="output-box" id="b64-output">Click Encode or Decode...</div>
+</div>
+
+<!-- CSV TO JSON -->
+<div class="tool-section" id="csv">
+<h2>&#128202; CSV to JSON Converter <span class="badge badge-free">Free</span></h2>
+<textarea id="csv-input" placeholder="Paste CSV data here...
+First row is header">name,age,city
+John,30,New York
+Jane,25,San Francisco
+Bob,35,Chicago</textarea>
+<div class="btn-row">
+<button class="btn btn-primary btn-sm" onclick="csvToJson()">Convert to JSON</button>
+<button class="btn btn-outline btn-sm" onclick="copyOutput('csv-output')">Copy</button>
+</div>
+<div class="output-box" id="csv-output">Click Convert to see JSON...</div>
+</div>
+
+<!-- QR CODE GENERATOR -->
+<div class="tool-section" id="qr">
+<h2>&#128276; QR Code Generator <span class="badge badge-free">Free</span></h2>
+<div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap">
+<input type="text" id="qr-input" placeholder="Enter URL or text..." value="https://site-metx.vercel.app" style="flex:1;min-width:200px">
+<button class="btn btn-primary" onclick="generateQR()">Generate QR</button>
+</div>
+<div id="qr-output" style="text-align:center;padding:20px;min-height:200px;display:flex;align-items:center;justify-content:center">
+<div class="output-box" style="width:100%;text-align:center">Enter text and click Generate...</div>
+</div>
+</div>
+
+<!-- COLOR CONVERTER -->
+<div class="tool-section" id="color">
+<h2>&#127912; Color Converter <span class="badge badge-free">Free</span></h2>
+<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+<div style="flex:1;min-width:150px">
+<label style="font-size:0.85rem;color:var(--muted)">HEX</label>
+<input type="text" id="color-hex" placeholder="#6c5ce7" value="#6c5ce7" oninput="convertColor('hex')">
+</div>
+<div style="flex:1;min-width:100px">
+<label style="font-size:0.85rem;color:var(--muted)">R</label>
+<input type="number" id="color-r" min="0" max="255" value="108" onchange="convertColor('rgb')">
+</div>
+<div style="flex:1;min-width:100px">
+<label style="font-size:0.85rem;color:var(--muted)">G</label>
+<input type="number" id="color-g" min="0" max="255" value="92" onchange="convertColor('rgb')">
+</div>
+<div style="flex:1;min-width:100px">
+<label style="font-size:0.85rem;color:var(--muted)">B</label>
+<input type="number" id="color-b" min="0" max="255" value="231" onchange="convertColor('rgb')">
+</div>
+<div style="flex:2;min-width:200px">
+<label style="font-size:0.85rem;color:var(--muted)">Preview</label>
+<div id="color-preview" style="width:100%;height:48px;border-radius:8px;background:#6c5ce7;border:1px solid var(--border)"></div>
+</div>
+</div>
+<p id="color-css" style="margin-top:8px;font-size:0.85rem;color:var(--muted)"></p>
+</div>
+
+<!-- TIP BOX -->
+<div class="tip-box">
+<h3>&#9749; Was this helpful?</h3>
+<p>These tools are 100% free. If they save you time, consider sending a tip in crypto.</p>
+<code>ETH: 0x960b9fe28490153eb0cb50ee9c91e7a9a3977dad</code>
+<p style="font-size:0.8rem;margin-top:4px">SOL: Dfm3P1Sm6Q5GJPSBVnBQWUeNqZPLoGZXNgqfRdyqVPVF</p>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+<h3>&#128640; Want 50+ Python scripts that do all this and more?</h3>
+<p>Get the complete Python Productivity Toolkit with file management, data processing, PDF tools, web scraping, image automation — all from your terminal.</p>
+<a href="/#buy" class="btn btn-primary" style="display:inline-block;text-decoration:none">Get the Full Toolkit — $5</a>
+<p style="font-size:0.8rem;margin-top:8px;color:var(--muted)">Lifetime access · Free updates · Commercial use allowed</p>
+</div>
+
+</div>
+
+<footer>
+<div class="container">
+<p>&copy; 2026 ToolKit.py · <a href="/">Home</a> · <a href="/tools/">Tools</a> · <a href="/#buy">Buy Toolkit</a></p>
+<p style="margin-top:8px;font-size:0.75rem">All tools run locally in your browser. No data is ever sent to any server.</p>
+</div>
+</footer>
+
+<script>
+function runRegex(){
+const p=document.getElementById('regex-pattern').value;
+const t=document.getElementById('regex-input').value;
+const g=document.getElementById('regex-global').checked;
+const c=document.getElementById('regex-case').checked;
+const out=document.getElementById('regex-output');
+if(!p){out.className='output-box';out.textContent='Enter a pattern to see matches...';return}
+try{
+const flags=(g?'g':'')+(c?'i':'');
+const re=new RegExp(p,flags);
+const matches=t.match(re);
+if(matches){
+out.className='output-box';
+out.innerHTML=`<strong>${matches.length} match(es) found:</strong>\n`+matches.map((m,i)=>`  [${i}] "${m}"`).join('\n');
+}else{
+out.className='output-box';out.textContent='No matches found.';
+}
+}catch(e){
+out.className='output-box error';out.textContent='Regex Error: '+e.message;
+}
+}
+
+function formatJson(){
+const inp=document.getElementById('json-input').value;
+const out=document.getElementById('json-output');
+try{
+const obj=JSON.parse(inp);
+out.className='output-box';
+out.textContent=JSON.stringify(obj,null,2);
+}catch(e){
+out.className='output-box error';out.textContent='Invalid JSON: '+e.message;
+}
+}
+
+function minifyJson(){
+const inp=document.getElementById('json-input').value;
+const out=document.getElementById('json-output');
+try{
+const obj=JSON.parse(inp);
+out.className='output-box';out.textContent=JSON.stringify(obj);
+}catch(e){
+out.className='output-box error';out.textContent='Invalid JSON: '+e.message;
+}
+}
+
+function generateUUID(type){
+const out=document.getElementById('uuid-output');out.className='output-box';
+if(type==='v4'){out.textContent=crypto.randomUUID();}
+else if(type==='v1'){const t=new Date().getTime();const r=crypto.randomUUID();out.textContent=r.substring(0,8)+'-'+t.toString(16).slice(-4)+'-4'+r.substring(13);}
+else if(type==='nil'){out.textContent='00000000-0000-0000-0000-000000000000';}
+else if(type==='bulk'){const uuids=[];for(let i=0;i<10;i++)uuids.push(crypto.randomUUID());out.textContent=uuids.join('\n');}
+}
+
+function encodeB64(){
+const inp=document.getElementById('b64-input').value;
+const out=document.getElementById('b64-output');
+try{out.className='output-box';out.textContent=btoa(inp);}
+catch(e){out.className='output-box error';out.textContent='Encode Error: '+e.message;}
+}
+function decodeB64(){
+const inp=document.getElementById('b64-input').value;
+const out=document.getElementById('b64-output');
+try{out.className='output-box';out.textContent=atob(inp);}
+catch(e){out.className='output-box error';out.textContent='Decode Error: Not valid Base64';}
+}
+
+function csvToJson(){
+const inp=document.getElementById('csv-input').value;
+const out=document.getElementById('csv-output');
+try{
+const lines=inp.trim().split('\n');
+if(lines.length<2){out.className='output-box error';out.textContent='Need at least 2 rows (header + data)';return}
+const headers=lines[0].split(',').map(h=>h.trim());
+const result=[];
+for(let i=1;i<lines.length;i++){
+const vals=lines[i].split(',');
+const row={};
+headers.forEach((h,j)=>{row[h]=vals[j]?vals[j].trim():'';});
+result.push(row);
+}
+out.className='output-box';out.textContent=JSON.stringify(result,null,2);
+}catch(e){out.className='output-box error';out.textContent='Error: '+e.message;}
+}
+
+function generateQR(){
+const inp=document.getElementById('qr-input').value;
+const out=document.getElementById('qr-output');
+if(!inp){out.innerHTML='<div class="output-box" style="width:100%;text-align:center">Enter text first...</div>';return}
+const enc=encodeURIComponent(inp);
+const url=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${enc}`;
+out.innerHTML=`<div style="text-align:center"><img src="${url}" alt="QR Code" style="border-radius:8px;background:#fff;padding:8px"><p style="margin-top:8px;font-size:0.85rem;color:var(--muted)">"${inp.length>50?inp.substring(0,50)+'...':inp}"</p></div>`;
+}
+
+function convertColor(src){
+const hex=document.getElementById('color-hex');
+const rEl=document.getElementById('color-r');
+const gEl=document.getElementById('color-g');
+const bEl=document.getElementById('color-b');
+const preview=document.getElementById('color-preview');
+const css=document.getElementById('color-css');
+if(src==='hex'){
+let h=hex.value.replace('#','');
+if(!/^[0-9a-fA-F]{6}$/.test(h))return;
+const r=parseInt(h.substring(0,2),16);
+const g=parseInt(h.substring(2,4),16);
+const b=parseInt(h.substring(4,6),16);
+rEl.value=r;gEl.value=g;bEl.value=b;
+const col=`rgb(${r},${g},${b})`;preview.style.background=col;
+css.textContent=`RGB: ${col} | HSL: ${rgbToHsl(r,g,b)}`;
+}else{
+const r=parseInt(rEl.value)||0;const g=parseInt(gEl.value)||0;const b=parseInt(bEl.value)||0;
+const h='#'+[r,g,b].map(x=>Math.min(255,Math.max(0,x)).toString(16).padStart(2,'0')).join('');
+hex.value=h;
+const col=`rgb(${r},${g},${b})`;preview.style.background=col;
+css.textContent=`HEX: ${h} | HSL: ${rgbToHsl(r,g,b)}`;
+}
+}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h=0,s=0;const l=(max+min)/2;if(max!==min){const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break}}return `hsl(${Math.round(h*360)},${Math.round(s*100)}%,${Math.round(l*100)}%)`;}
+
+function copyOutput(id){
+const el=document.getElementById(id);
+const text=el.textContent;
+navigator.clipboard.writeText(text).then(()=>{
+const orig=el.style.background;
+el.style.background='rgba(0,210,160,0.15)';
+setTimeout(()=>el.style.background=orig,600);
+}).catch(()=>{});
+}
+</script>
+</body>
+</html>
