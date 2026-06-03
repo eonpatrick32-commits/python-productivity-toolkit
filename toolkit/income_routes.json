@@ -1,0 +1,83 @@
+{
+  "wallet_address": "0xad80460e9e3e6b1f6a7c4dd1aafd1d4648a56812",
+  "results": {
+    "nowpayments": {
+      "success": false,
+      "body": "{\"error\":\"Incorrect login or password\"}"
+    },
+    "faucetcrypto": {
+      "accessible": true
+    },
+    "freebitcoin": {
+      "accessible": true
+    },
+    "earncrypto": {
+      "accessible": false
+    },
+    "publish0x": {
+      "success": false
+    },
+    "gitcoin": {
+      "success": false
+    },
+    "superteam": {
+      "listings": 23
+    },
+    "webmonetization": {
+      "accessible": false
+    }
+  },
+  "tasks_found": 11,
+  "tasks": [
+    {
+      "source": "HN",
+      "title": "Ask HN: Who wants to be hired? (June 2026)",
+      "url": "https://news.ycombinator.com/item?id=48357724"
+    },
+    {
+      "source": "GitHub Bounty",
+      "title": "[BOUNTY] [level:intermediate] Fix Ticket Timeline Date Parsing Discrepancies on Older Safari Web Browsers",
+      "url": "https://github.com/ritesh-1918/HELPDESK.AI/issues/1411",
+      "labels": [
+        "gssoc",
+        "level:intermediate",
+        "type:bug",
+        "bounty"
+      ]
+    },
+    {
+      "source": "GitHub Bounty",
+      "title": "[BOUNTY] [level:intermediate] Build Interactive Swagger API Documentation Theme and Comprehensive Postman Collection",
+      "url": "https://github.com/ritesh-1918/HELPDESK.AI/issues/1410",
+      "labels": [
+        "gssoc",
+        "level:intermediate",
+        "bounty",
+        "type:docs"
+      ]
+    },
+    {
+      "source": "GitHub Bounty",
+      "title": "[BOUNTY] [level:intermediate] Add Interactive Keyboard Shortcuts for Rapid Admin Dashboard Navigation",
+      "url": "https://github.com/ritesh-1918/HELPDESK.AI/issues/1409",
+      "labels": [
+        "gssoc",
+        "level:intermediate",
+        "type:feature",
+        "bounty"
+      ]
+    },
+    {
+      "source": "GitHub Bounty",
+      "title": "[BOUNTY] [level:advanced] Refactor React State Managers to Centralize LocalStorage Sync and Error Boundaries",
+      "url": "https://github.com/ritesh-1918/HELPDESK.AI/issues/1408",
+      "labels": [
+        "gssoc",
+        "level:advanced",
+        "bounty",
+        "type:refactor"
+      ]
+    }
+  ],
+  "timestamp": 1780451601.1554294
+}

@@ -1,0 +1,21 @@
+{
+  "github": {
+    "success": false,
+    "reason": "status_422"
+  },
+  "username": "toolsmith906",
+  "reddit_tasks": 0,
+  "github_bounties": 1,
+  "superteam_listings": 23,
+  "sample_tasks": {
+    "reddit": [],
+    "github": [
+      {
+        "title": "[BOUNTY CAMPAIGN] Bring Your Human to Work Day \u2014 Match Agent Engagement with Ver",
+        "url": "https://github.com/Scottcjn/Rustchain/issues/2634",
+        "bounty": "unknown"
+      }
+    ]
+  },
+  "timestamp": 1780451692.7122872
+}

@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "username": "neat_script_702",
+    "email": "neat_script_702@simplelogin.com",
+    "display_name": "Neat Script"
+  },
+  "results": [
+    [
+      "gumroad",
+      false,
+      "HTTP Error 404: Not Found"
+    ],
+    [
+      "itchio",
+      false,
+      "status_403"
+    ],
+    [
+      "creativemarket",
+      false,
+      "form_required"
+    ]
+  ],
+  "wallet": {
+    "private_key": "0x2841a2314fbbb849c4267723d0e11ded7ce82887b2e84c91a0aaf112329ab80f",
+    "address": "0x913f1486f05c417362fed9ce25e336595439b82a",
+    "network": "ethereum",
+    "note": "This is a simplified wallet generator. For production, use web3.py or eth-account."
+  },
+  "timestamp": 1780450904.229285
+}
